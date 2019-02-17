@@ -3,6 +3,7 @@ package com.retrofitdemo.network;
 import com.google.gson.Gson;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.retrofitdemo.api.Api;
+import com.retrofitdemo.app.App;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -19,13 +20,16 @@ public class RetrofitUtils {
     private RetrofitUtils(){
 
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
-//        Cache cache = new Cache(new File(""),1024);
+        long maxCacheSize = 100 * 1024 * 1024;
+        File httpCacheDirectory = new File(App.getContext().getCacheDir(), "okhttpCache");
+        Cache cache = new Cache(httpCacheDirectory,
+                maxCacheSize);
         okHttpClient = new OkHttpClient.Builder()
                 .addNetworkInterceptor(new HttpNetworkInterceptor())
                 .addInterceptor(httpLoggingInterceptor)
                 .readTimeout(8,TimeUnit.SECONDS)
                 .writeTimeout(8,TimeUnit.SECONDS)
-//                .cache(cache)
+                .cache(cache)
                 .build();
 
         retrofit = new Retrofit.Builder()
